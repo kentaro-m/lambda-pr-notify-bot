@@ -58,7 +58,9 @@ export default class PullRequest {
 
       await Promise.all(comments.data.map(async function (comment) {
         approveComments.forEach(function (approveComment) {
-          if (comment.body === approveComment) results.push(comment);
+          if (comment.body === approveComment || comment.state === 'APPROVED') {
+            results.push(comment);
+          }
         });
         return;
       }));
