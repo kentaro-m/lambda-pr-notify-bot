@@ -55,10 +55,14 @@ export default class PullRequest {
       });
 
       const results = [];
+      const commentIDs = [];
 
       await Promise.all(comments.data.map(async function (comment) {
         approveComments.forEach(function (approveComment) {
-          if (comment.body === approveComment) results.push(comment);
+          if (!commentIDs.includes(comment.id)) {
+            if (comment.body === approveComment || comment.state === 'APPROVED') results.push(comment);
+            commentIDs.push(comment.id);
+          }
         });
         return;
       }));

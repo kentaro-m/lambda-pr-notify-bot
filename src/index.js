@@ -11,14 +11,14 @@ const SLACK_API_TOKEN = process.env.SLACK_API_TOKEN || '';
 const options = {
   debug: true,
   protocol: 'https',
+  port: 443,
   host: 'api.github.com',
   pathPrefix: '',
   headers: {
     'user-agent': 'PR-Bot',
   },
   Promise,
-  followRedirects: false,
-  timeout: 5000,
+  timeout: 10000,
 };
 
 if (config.host) {
@@ -63,15 +63,20 @@ exports.handler = async (event, context, callback) => {
       const repo = payload.repository.name;
       const owner = payload.repository.owner.login;
       const url = payload.pull_request.html_url;
+      const author = payload.pull_request.user.login;
 
       if (config.repositories.indexOf(repo) !== -1 && action === 'opened') {
+        const reviewers = config.reviewers.filter((reviewer) => {
+          return author !== reviewer;
+        });
+
         const pr = new PullRequest(options, GITHUB_API_TOKEN);
-        await pr.requestReview(owner, repo, number, config.reviewers);
-        await pr.assignReviewers(owner, repo, number, config.reviewers);
+        await pr.requestReview(owner, repo, number, reviewers);
+        await pr.assignReviewers(owner, repo, number, reviewers);
 
         if (config.requestReview === true || config.assignReviewers === true) {
           const slack = new Slack(SLACK_API_TOKEN);
-          config.reviewers.forEach(async (reviewer) => {
+          reviewers.forEach(async (reviewer) => {
             await slack.postMessage(config.slackUsers[`${reviewer}`], url, config.message.requestReview);
           });
         }
