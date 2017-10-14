@@ -9,7 +9,6 @@ import Slack from '../../src/slack';
 /* global describe, it, beforeEach, afterEach */
 
 describe('Index', () => {
-
   describe('Environment variable', () => {
     let callback;
     let event;
