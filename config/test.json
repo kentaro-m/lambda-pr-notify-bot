@@ -1,0 +1,29 @@
+{
+  "host": "",
+  "pathPrefix": "",
+  "organization": "",
+  "repositories": [
+    "lambda-pr-notify-bot-test"
+  ],
+  "reviewers": [
+    "matsushita-kentaro"
+  ],
+  "approveComments": [
+    "+1",
+    "LGTM"
+  ],
+  "numApprovers": 1,
+  "slackUsers": {
+    "matsushita-kentaro": "kentaro",
+    "kentaro-m": "kentaro"
+  },
+  "message": {
+    "requestReview": "Please review this pull request.",
+    "ableToMerge": "Able to merge this pull request.",
+    "mentionComment": "Please check this review comment."
+  },
+  "assignReviewers": true,
+  "requestReview": true,
+  "ableToMerge": true,
+  "mentionComment": true
+}

@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/lambda-pr-notify-bot
+    docker:
+      - image: circleci/node:6.11
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: npm install
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: test
+          command: npm test
