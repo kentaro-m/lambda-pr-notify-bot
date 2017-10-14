@@ -4,7 +4,7 @@
   "description": "A slackbot that reminds reviewers to review their pull requests.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_ENV=test nyc --reporter=lcov --reporter=text mocha --require babel-core/register --reporter spec test/**/*.spec.js",
     "package": "babel ./src/ -d ./dist/"
   },
   "author": "Kentaro Matsushita",
@@ -23,8 +23,12 @@
     "github": "^9.2.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "eslint": "^4.3.0",
     "eslint-config-airbnb-base": "^11.3.1",
-    "eslint-plugin-import": "^2.7.0"
+    "eslint-plugin-import": "^2.7.0",
+    "mocha": "^4.0.1",
+    "nyc": "^11.2.1",
+    "sinon": "^4.0.1"
   }
 }

@@ -4,10 +4,6 @@ import Promise from 'bluebird';
 import PullRequest from './pull_request';
 import Slack from './slack';
 
-const SECRET_TOKEN = process.env.SECRET_TOKEN || '';
-const GITHUB_API_TOKEN = process.env.GITHUB_API_TOKEN || '';
-const SLACK_API_TOKEN = process.env.SLACK_API_TOKEN || '';
-
 const options = {
   debug: true,
   protocol: 'https',
@@ -34,6 +30,9 @@ function calculateSignature(secret, payload) {
 }
 
 exports.handler = async (event, context, callback) => {
+  const SECRET_TOKEN = process.env.SECRET_TOKEN || '';
+  const GITHUB_API_TOKEN = process.env.GITHUB_API_TOKEN || '';
+  const SLACK_API_TOKEN = process.env.SLACK_API_TOKEN || '';
   const githubEvent = event.headers['X-GitHub-Event'];
   const signature = event.headers['X-Hub-Signature'];
   const payload = event.body;
