@@ -121,7 +121,7 @@ describe('Index', () => {
     });
 
     describe('handle a pull request event', () => {
-      it('can send a review request message with Slack to reviewers', async () => {
+      it('can send a review request message to reviewers using Slack', async () => {
         sandbox.stub(PullRequest.prototype, 'requestReview').returns(Promise.resolve({}));
         sandbox.stub(PullRequest.prototype, 'assignReviewers').returns(Promise.resolve({}));
         event = readFixtures('test/fixtures/request_review.json');
@@ -131,14 +131,14 @@ describe('Index', () => {
     });
 
     describe('handle a pull request review event', () => {
-      it('can send a able merge message with Slack to the author', async () => {
+      it('can send a able merge message to the author using Slack', async () => {
         sandbox.stub(PullRequest.prototype, 'getApproveComments').returns(Promise.resolve([{}, {}]));
         event = readFixtures('test/fixtures/merge.json');
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
       });
 
-      it('can send a mention message with Slack to a member', async () => {
+      it('can send a mention message to a member using Slack', async () => {
         sandbox.stub(PullRequest.prototype, 'getApproveComments').returns(Promise.resolve([{}]));
         event = readFixtures('test/fixtures/mention.json');
         await index.handler(event, context, callback);
