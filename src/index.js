@@ -70,8 +70,14 @@ exports.handler = async (event, context, callback) => {
         });
 
         const pr = new PullRequest(options, GITHUB_API_TOKEN);
-        await pr.requestReview(owner, repo, number, reviewers);
-        await pr.assignReviewers(owner, repo, number, reviewers);
+
+        if (config.requestReview) {
+          await pr.requestReview(owner, repo, number, reviewers);
+        }
+
+        if (config.assignReviewers) {
+          await pr.assignReviewers(owner, repo, number, reviewers);
+        }
 
         if (config.requestReview === true || config.assignReviewers === true) {
           const slack = new Slack(SLACK_API_TOKEN);
@@ -97,9 +103,10 @@ exports.handler = async (event, context, callback) => {
 
       if (config.ableToMerge) {
         const pr = new PullRequest(options, GITHUB_API_TOKEN);
-        const comments = await pr.getApproveComments(owner, repo, number, config.approveComments);
+        const reviewComments = await pr.getReviewComments(owner, repo, number);
+        const approveComments = PullRequest.getApproveComments(reviewComments, config.approveComments);
 
-        if (config.repositories.indexOf(repo) !== -1 && comments.length >= config.numApprovers) {
+        if (config.repositories.indexOf(repo) !== -1 && approveComments.length >= config.numApprovers) {
           await slack.postMessage(config.slackUsers[`${user}`], url, config.message.ableToMerge);
         }
       }

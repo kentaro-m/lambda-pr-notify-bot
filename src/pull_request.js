@@ -1,7 +1,6 @@
 'use struct';
 
 import GitHubApi from 'github';
-import config from 'config';
 
 export default class PullRequest {
   constructor(options, token) {
@@ -13,10 +12,6 @@ export default class PullRequest {
   }
 
   async requestReview(owner, repo, number, reviewers) {
-    if (!config.requestReview) {
-      return;
-    }
-
     try {
       await this.github.pullRequests.createReviewRequest({
         owner,
@@ -30,10 +25,6 @@ export default class PullRequest {
   }
 
   async assignReviewers(owner, repo, number, assignees) {
-    if (!config.assignReviewers) {
-      return;
-    }
-
     try {
       await this.github.issues.edit({
         owner,
@@ -46,7 +37,7 @@ export default class PullRequest {
     }
   }
 
-  async getApproveComments(owner, repo, number, approveComments) {
+  async getReviewComments(owner, repo, number) {
     try {
       const comments = await this.github.pullRequests.getReviews({
         owner,
@@ -54,23 +45,26 @@ export default class PullRequest {
         number,
       });
 
-      const results = [];
-      const commentIDs = [];
-
-      await Promise.all(comments.data.map(async function (comment) {
-        approveComments.forEach(function (approveComment) {
-          if (!commentIDs.includes(comment.id)) {
-            if (comment.body === approveComment || comment.state === 'APPROVED') results.push(comment);
-            commentIDs.push(comment.id);
-          }
-        });
-        return;
-      }));
-
-      return results;
+      return comments;
     } catch (error) {
       throw new Error(error.message);
     }
+  }
+
+  static getApproveComments(reviewComments, approveComments) {
+    const results = [];
+    const reviewCommentIDs = [];
+
+    reviewComments.data.map((reviewComment) => {
+      approveComments.forEach((approveComment) => {
+        if (!reviewCommentIDs.includes(reviewComment.id)) {
+          if (reviewComment.body === approveComment || reviewComment.state === 'APPROVED') results.push(reviewComment);
+          reviewCommentIDs.push(reviewComment.id);
+        }
+      });
+    });
+
+    return results;
   }
 
   static parseMentionComment(body, url) {

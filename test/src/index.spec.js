@@ -132,14 +132,16 @@ describe('Index', () => {
 
     describe('handle a pull request review event', () => {
       it('can send a able merge message to the author using Slack', async () => {
-        sandbox.stub(PullRequest.prototype, 'getApproveComments').returns(Promise.resolve([{}, {}]));
+        const reviewComments = readFixtures('test/fixtures/review_comments_approved.json');
+        sandbox.stub(PullRequest.prototype, 'getReviewComments').returns(Promise.resolve(reviewComments));
         event = readFixtures('test/fixtures/merge.json');
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
       });
 
       it('can send a mention message to a member using Slack', async () => {
-        sandbox.stub(PullRequest.prototype, 'getApproveComments').returns(Promise.resolve([{}]));
+        const reviewComments = readFixtures('test/fixtures/review_comments_changed.json');
+        sandbox.stub(PullRequest.prototype, 'getReviewComments').returns(Promise.resolve(reviewComments));
         event = readFixtures('test/fixtures/mention.json');
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
