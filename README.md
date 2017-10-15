@@ -10,7 +10,7 @@ Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to 
   * Pull request review request is created
   * Mention comment is created on a pull request
 
-![](./lambda-pr-notify-bot.png)
+![](./demo.png)
 
 ## Architecture
 ![](./architecture.png)
