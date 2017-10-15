@@ -2,9 +2,6 @@
   "host": "",
   "pathPrefix": "",
   "organization": "",
-  "repositories": [
-    "unleash-sample"
-  ],
   "reviewers": [
     "matsushita-kentaro"
   ],
