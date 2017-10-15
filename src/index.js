@@ -63,7 +63,7 @@ exports.handler = async (event, context, callback) => {
       const owner = payload.repository.owner.login;
       const author = payload.pull_request.user.login;
 
-      if (config.repositories.indexOf(repo) !== -1 && action === 'opened') {
+      if (action === 'opened') {
         const reviewers = config.reviewers.filter((reviewer) => {
           return author !== reviewer;
         });
@@ -105,7 +105,7 @@ exports.handler = async (event, context, callback) => {
         const reviewComments = await pr.getReviewComments(owner, repo, number);
         const approveComments = PullRequest.getApproveComments(reviewComments, config.approveComments);
 
-        if (config.repositories.indexOf(repo) !== -1 && approveComments.length >= config.numApprovers) {
+        if (approveComments.length >= config.numApprovers) {
           const message = Slack.buildMessage(payload, config.message.ableToMerge, 'ableToMerge');
           await slack.postMessage(config.slackUsers[`${user}`], message);
         }

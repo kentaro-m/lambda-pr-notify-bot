@@ -2,9 +2,6 @@
   "host": "",
   "pathPrefix": "",
   "organization": "",
-  "repositories": [
-    "lambda-pr-notify-bot-test"
-  ],
   "reviewers": [
     "matsushita-kentaro"
   ],
