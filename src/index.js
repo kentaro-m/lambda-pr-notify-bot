@@ -61,7 +61,6 @@ exports.handler = async (event, context, callback) => {
       const number = payload.number;
       const repo = payload.repository.name;
       const owner = payload.repository.owner.login;
-      const url = payload.pull_request.html_url;
       const author = payload.pull_request.user.login;
 
       if (config.repositories.indexOf(repo) !== -1 && action === 'opened') {
@@ -82,7 +81,8 @@ exports.handler = async (event, context, callback) => {
         if (config.requestReview === true || config.assignReviewers === true) {
           const slack = new Slack(SLACK_API_TOKEN);
           reviewers.forEach(async (reviewer) => {
-            await slack.postMessage(config.slackUsers[`${reviewer}`], url, config.message.requestReview);
+            const message = Slack.buildMessage(payload, config.message.requestReview, 'requestReview');
+            await slack.postMessage(config.slackUsers[`${reviewer}`], message);
           });
         }
       }
@@ -97,7 +97,6 @@ exports.handler = async (event, context, callback) => {
       const repo = payload.repository.name;
       const owner = payload.repository.owner.login;
       const user = payload.pull_request.user.login;
-      const url = payload.pull_request.html_url;
 
       const slack = new Slack(SLACK_API_TOKEN);
 
@@ -107,15 +106,17 @@ exports.handler = async (event, context, callback) => {
         const approveComments = PullRequest.getApproveComments(reviewComments, config.approveComments);
 
         if (config.repositories.indexOf(repo) !== -1 && approveComments.length >= config.numApprovers) {
-          await slack.postMessage(config.slackUsers[`${user}`], url, config.message.ableToMerge);
+          const message = Slack.buildMessage(payload, config.message.ableToMerge, 'ableToMerge');
+          await slack.postMessage(config.slackUsers[`${user}`], message);
         }
       }
 
       if (config.mentionComment) {
-        const comment = PullRequest.parseMentionComment(payload.review.body, payload.review.html_url);
+        const comment = PullRequest.parseMentionComment(payload.review.body);
         if (comment.hasOwnProperty('mentionUsers')) {
           comment.mentionUsers.forEach(async (mentionUser) => {
-            await slack.postMessage(config.slackUsers[`${mentionUser}`], comment.url, config.message.mentionComment);
+            const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
+            await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
           });
         }
       }

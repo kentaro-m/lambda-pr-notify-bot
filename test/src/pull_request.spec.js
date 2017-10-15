@@ -40,11 +40,10 @@ describe('PullRequest', () => {
     describe('including a user name in a comment', () => {
       it('can perse a mention comment', () => {
         const comment = '@taro request change';
-        const results = PullRequest.parseMentionComment(comment, 'http://example.com/');
+        const results = PullRequest.parseMentionComment(comment);
 
         const expected = {
           mentionUsers: ['taro'],
-          url: 'http://example.com/',
         };
 
         assert.deepEqual(results, expected);
@@ -54,11 +53,10 @@ describe('PullRequest', () => {
     describe('including multiple user names in a comment', () => {
       it('can perse a mention comment', () => {
         const comment = '@taro @ken request change';
-        const results = PullRequest.parseMentionComment(comment, 'http://example.com/');
+        const results = PullRequest.parseMentionComment(comment);
 
         const expected = {
           mentionUsers: ['taro', 'ken'],
-          url: 'http://example.com/',
         };
 
         assert.deepEqual(results, expected);
@@ -68,7 +66,7 @@ describe('PullRequest', () => {
     describe('not including a user name in a comment', () => {
       it('can perse a mention comment', () => {
         const comment = 'request change';
-        const results = PullRequest.parseMentionComment(comment, 'http://example.com/');
+        const results = PullRequest.parseMentionComment(comment);
 
         assert.deepEqual(results, {});
       });

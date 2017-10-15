@@ -67,7 +67,7 @@ export default class PullRequest {
     return results;
   }
 
-  static parseMentionComment(body, url) {
+  static parseMentionComment(body) {
     const matches = body.match(/@([a-zA-Z0-9_-]+)/g);
 
     if (matches === null) {
@@ -80,7 +80,6 @@ export default class PullRequest {
 
     const results = {
       mentionUsers,
-      url,
     };
 
     return results;
