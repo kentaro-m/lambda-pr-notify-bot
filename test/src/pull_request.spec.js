@@ -1,7 +1,9 @@
 import Promise from 'bluebird';
 import { assert } from 'chai';
+import config from 'config';
 
 import PullRequest from '../../src/pull_request';
+import readFixtures from '../../test/utils/fixtures';
 
 /* global describe, it */
 
@@ -23,6 +25,14 @@ describe('PullRequest', () => {
     it('should initialize', () => {
       const pr = new PullRequest(options, 'dummy token');
       assert.instanceOf(pr, PullRequest);
+    });
+  });
+
+  describe('getApproveComments', () => {
+    it('can create an array of approved comments', () => {
+      const reviewComments = readFixtures('test/fixtures/review_comments_approved.json');
+      const approveComments = PullRequest.getApproveComments(reviewComments, config.approveComments);
+      assert.equal(approveComments.length, 1);
     });
   });
 
