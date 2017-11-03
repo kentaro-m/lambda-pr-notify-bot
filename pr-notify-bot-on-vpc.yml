@@ -1,6 +1,13 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: A slackbot that reminds reviewers to review their pull requests on AWS.
+Parameters:
+  SecurityGroupIds:
+    Description: The list of Security Group IDs for the HTTPS Access.
+    Type: CommaDelimitedList
+  PrivateSubnetIds:
+    Description: The list of VPC Private Subnet IDs for running the Lambda Function.
+    Type: CommaDelimitedList
 Resources:
   GitHubWebhook:
     Type: AWS::Serverless::Api
@@ -69,7 +76,11 @@ Resources:
       Runtime: nodejs6.10
       Description: A slackbot that reminds reviewers to review their pull requests on AWS.
       MemorySize: 128
-      Timeout: 3
+      Timeout: 10
+      Policies: AWSLambdaVPCAccessExecutionRole
+      VpcConfig:
+        SecurityGroupIds: !Ref SecurityGroupIds
+        SubnetIds: !Ref PrivateSubnetIds
       Environment:
         Variables:
           SECRET_TOKEN: ""

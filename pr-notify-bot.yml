@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: A slackbot that reminds reviewers to review their pull requests on AWS.
+Resources:
+  GitHubWebhook:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title: GitHub webhook
+          description: GitHub webhook
+          version: 0.1.0
+        schemes:
+          - https
+        basePath: "/"
+        paths:
+          /webhook:
+            post:
+              consumes:
+              - "application/json"
+              produces:
+              - "application/json"
+              responses:
+                "200":
+                  description: "200 response"
+                  schema:
+                    $ref: "#/definitions/Empty"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: "200"
+                requestTemplates:
+                  application/json: |
+                    {
+                      "body" : $input.json('$'),
+                      "headers": {
+                        #foreach($header in $input.params().header.keySet())
+                        "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
+                        #end
+                      },
+                      "method": "$context.httpMethod",
+                      "params": {
+                        #foreach($param in $input.params().path.keySet())
+                        "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+                        #end
+                      },
+                      "query": {
+                        #foreach($queryParam in $input.params().querystring.keySet())
+                        "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
+                        #end
+                      }
+                    }
+                passthroughBehavior: when_no_templates
+                httpMethod: POST
+                type: aws
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PrNotifyBot.Arn}/invocations
+        definitions:
+          Empty:
+            type: "object"
+            title: "Empty Schema"
+
+  PrNotifyBot:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/index.handler
+      Runtime: nodejs6.10
+      Description: A slackbot that reminds reviewers to review their pull requests on AWS.
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          SECRET_TOKEN: ""
+          GITHUB_API_TOKEN: ""
+          SLACK_API_TOKEN: ""
+      Events:
+        Webhook:
+          Type: Api
+          Properties:
+            Path: /webhook
+            Method: post
+            RestApiId:
+              Ref: GitHubWebhook
+
+Outputs:
+  ApiUrl:
+    Value: !Sub https://${GitHubWebhook}.execute-api.${AWS::Region}.amazonaws.com/prod/webhook
