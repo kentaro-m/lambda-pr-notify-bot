@@ -10,17 +10,7 @@ Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to 
   * Mention comment is created on a pull request
 * Automatic addition of reviewers to pull requests
 
-### When a pull request can be merged, notify an author
-![](./images/able_to_merge.gif)
-
-### When a pull request review request is created, notify reviewers
-![](./images/assign_to_reviewer.gif)
-
-### When a mention comment is created on a pull request, notify recipients
-![](./images/check_review_comment.gif)
-
-### Whan a pull request is opened, assign reviewers.
-![](./images/auto_assign.gif)
+![](./images/demo.png)
 
 ## Architecture
 ![](./architecture.png)
@@ -100,6 +90,19 @@ Please use it when assigning a static IP to execute a Lambda Function. Also, if 
 $ aws cloudformation package --template-file pr-notify-bot-on-vpc.yml --s3-bucket <Your bucket name> --output-template .sam/packaged.yml
 $ aws cloudformation deploy --template-file ./.sam/packaged.yml --stack-name <Your stack name> --parameter-overrides SecurityGroupIds=<SecurityGroupIds value> PrivateSubnetIds=<PrivateSubnetIds value> --capabilities CAPABILITY_IAM
 ```
+
+## Demo
+### When a pull request can be merged, notify an author
+![](./images/able_to_merge.gif)
+
+### When a pull request review request is created, notify reviewers
+![](./images/assign_to_reviewer.gif)
+
+### When a mention comment is created on a pull request, notify recipients
+![](./images/check_review_comment.gif)
+
+### Whan a pull request is opened, assign reviewers.
+![](./images/auto_assign.gif)
 
 ## License
 MIT
