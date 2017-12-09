@@ -19,10 +19,10 @@ Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to 
 
 ### How to set up webhook on GitHub
 * Go to your project settings > Webhooks > Add webhook
-* **Payload URL** `https://<API ID>.execute-api.<AWS Region>.amazonaws.com/<Stage Nåame>/webhook`
+* **Payload URL** `https://<API ID>.execute-api.<AWS Region>.amazonaws.com/<Stage Name>/webhook`
 * **Content type** `application/json`
 * **Secret** any value
-* **Events** Pull request, Pull request review, Pull request review comment
+* **Events** Pull request, Pull request review, Pull request review comment, Issue
 
 ### How to run the bot on AWS
 ```
@@ -38,7 +38,6 @@ Installing packages and building code.
 {
   "host": "", // Required if using GitHub Enterprise
   "pathPrefix": "", // Required if using GitHub Enterprise
-  "organization": "",
   "repositories": [ // Repositories that allows bot actions
     "unleash-sample"
   ],
