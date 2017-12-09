@@ -29,6 +29,10 @@ function calculateSignature(secret, payload) {
   return `sha1=${crypto.createHmac('sha1', secret).update(payload, 'utf-8').digest('hex')}`;
 }
 
+function validateSignature(githubSignature, calculatedSignature) {
+  return githubSignature === calculatedSignature;
+}
+
 exports.handler = async (event, context, callback) => {
   const SECRET_TOKEN = process.env.SECRET_TOKEN || '';
   const GITHUB_API_TOKEN = process.env.GITHUB_API_TOKEN || '';
@@ -51,7 +55,8 @@ exports.handler = async (event, context, callback) => {
 
   const calculatedSignature = calculateSignature(SECRET_TOKEN, JSON.stringify(payload));
 
-  if (signature !== calculatedSignature) {
+  const isValid = validateSignature(signature, calculatedSignature);
+  if (!isValid) {
     return callback(new Error('X-Hub-Signature and Calculated Signature do not match.'));
   }
 

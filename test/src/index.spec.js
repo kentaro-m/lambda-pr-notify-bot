@@ -1,10 +1,11 @@
 import sinon from 'sinon';
 import { assert } from 'chai';
-
-import index from '../../src/index';
+import rewire from 'rewire';
 import readFixtures from '../../test/utils/fixtures';
 import PullRequest from '../../src/pull_request';
 import Slack from '../../src/slack';
+
+const index = rewire('../../src/index.js');
 
 /* global describe, it, beforeEach, afterEach */
 
@@ -113,6 +114,7 @@ describe('Index', () => {
       env = Object.assign({}, process.env);
       sandbox = sinon.createSandbox();
       sandbox.stub(Slack.prototype, 'postMessage').returns(Promise.resolve({}));
+      index.__set__('validateSignature', () => true);
     });
 
     afterEach(() => {
