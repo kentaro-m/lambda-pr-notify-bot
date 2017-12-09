@@ -4,13 +4,23 @@ A slackbot that reminds reviewers to review their pull requests on AWS.
 Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to review their pull requests.](https://github.com/kentaro-m/pr-notify-bot)
 
 ## Feature
-* Automatic addition of reviewers to pull requests
 * Send notifications to Slack
   * Pull request can be merged
   * Pull request review request is created
   * Mention comment is created on a pull request
+* Automatic addition of reviewers to pull requests
 
-![](./demo.png)
+### When a pull request can be merged, notify an author
+![](./images/able_to_merge.gif)
+
+### When a pull request review request is created, notify reviewers
+![](./images/assign_to_reviewer.gif)
+
+### When a mention comment is created on a pull request, notify recipients
+![](./images/check_review_comment.gif)
+
+### Whan a pull request is opened, assign reviewers.
+![](./images/auto_assign.gif)
 
 ## Architecture
 ![](./architecture.png)
