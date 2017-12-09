@@ -142,9 +142,17 @@ describe('Index', () => {
       it('can send a mention message to a member using Slack', async () => {
         const reviewComments = readFixtures('test/fixtures/review_comments_changed.json');
         sandbox.stub(PullRequest.prototype, 'getReviewComments').returns(Promise.resolve(reviewComments));
-        event = readFixtures('test/fixtures/mention.json');
+        event = readFixtures('test/fixtures/mention_review.json');
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
+      });
+    });
+
+    describe('handle a issue event', () => {
+      it('can send a mention message to a member using Slack', async () => {
+        event = readFixtures('test/fixtures/mention_issue.json');
+        await index.handler(event, context, callback);
+        assert.equal(callback.args[0][1].message, 'Issue event processing has been completed');
       });
     });
   });

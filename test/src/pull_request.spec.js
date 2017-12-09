@@ -68,7 +68,9 @@ describe('PullRequest', () => {
         const comment = 'request change';
         const results = PullRequest.parseMentionComment(comment);
 
-        assert.deepEqual(results, {});
+        assert.deepEqual(results, {
+          mentionUsers: [],
+        });
       });
     });
   });

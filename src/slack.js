@@ -17,12 +17,17 @@ export default class Slack {
   }
 
   static buildMessage(payload, message, type = '') {
+    const eventType = Object.prototype.hasOwnProperty.call(payload, 'issue') ? 'issue' : 'pull_request';
+    const user = payload[`${eventType}`].user;
+    const title = payload[`${eventType}`].title;
+    const titleLink = payload[`${eventType}`].html_url;
+
     const attachments = [{
       color: '#36a64f',
-      author_name: `${payload.pull_request.user.login} (${payload.pull_request.head.repo.name})`,
-      author_icon: payload.pull_request.user.avatar_url,
-      title: payload.pull_request.title,
-      title_link: payload.pull_request.html_url,
+      author_name: `${user.login} (${payload.repository.name})`,
+      author_icon: user.avatar_url,
+      title,
+      title_link: titleLink,
       text: message,
     }];
 
@@ -38,11 +43,13 @@ export default class Slack {
     if (type === 'mentionComment') {
       attachments[0].color = 'warning';
       attachments[0].text = `:eyes: ${message}`;
-      attachments[0].title_link = payload.review.html_url;
+
+      const commentType = Object.prototype.hasOwnProperty.call(payload, 'issue') ? 'comment' : 'review';
+      attachments[0].title_link = payload[`${commentType}`].html_url;
       attachments[0].fields = [
         {
           title: 'Comment',
-          value: payload.review.body,
+          value: payload[`${commentType}`].body,
           short: true,
         },
       ];

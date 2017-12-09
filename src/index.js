@@ -113,7 +113,24 @@ exports.handler = async (event, context, callback) => {
 
       if (config.mentionComment) {
         const comment = PullRequest.parseMentionComment(payload.review.body);
-        if (comment.hasOwnProperty('mentionUsers')) {
+        comment.mentionUsers.forEach(async (mentionUser) => {
+          const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
+          await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
+        });
+      }
+    } catch (error) {
+      return callback(new Error(error.message));
+    }
+
+    return callback(null, { message: 'Pull request review event processing has been completed' });
+  } else if (githubEvent === 'issue_comment') {
+    try {
+      const action = payload.action;
+      const slack = new Slack(SLACK_API_TOKEN);
+
+      if (action === 'created') {
+        if (config.mentionComment) {
+          const comment = PullRequest.parseMentionComment(payload.comment.body);
           comment.mentionUsers.forEach(async (mentionUser) => {
             const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
             await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
@@ -124,7 +141,7 @@ exports.handler = async (event, context, callback) => {
       return callback(new Error(error.message));
     }
 
-    return callback(null, { message: 'Pull request review event processing has been completed' });
+    return callback(null, { message: 'Issue event processing has been completed' });
   }
 
   return callback(null, { message: `event of type ${githubEvent} was ignored.` });
