@@ -29,6 +29,10 @@ function calculateSignature(secret, payload) {
   return `sha1=${crypto.createHmac('sha1', secret).update(payload, 'utf-8').digest('hex')}`;
 }
 
+function validateSignature(githubSignature, calculatedSignature) {
+  return githubSignature === calculatedSignature;
+}
+
 exports.handler = async (event, context, callback) => {
   const SECRET_TOKEN = process.env.SECRET_TOKEN || '';
   const GITHUB_API_TOKEN = process.env.GITHUB_API_TOKEN || '';
@@ -51,7 +55,8 @@ exports.handler = async (event, context, callback) => {
 
   const calculatedSignature = calculateSignature(SECRET_TOKEN, JSON.stringify(payload));
 
-  if (signature !== calculatedSignature) {
+  const isValid = validateSignature(signature, calculatedSignature);
+  if (!isValid) {
     return callback(new Error('X-Hub-Signature and Calculated Signature do not match.'));
   }
 
@@ -113,7 +118,24 @@ exports.handler = async (event, context, callback) => {
 
       if (config.mentionComment) {
         const comment = PullRequest.parseMentionComment(payload.review.body);
-        if (comment.hasOwnProperty('mentionUsers')) {
+        comment.mentionUsers.forEach(async (mentionUser) => {
+          const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
+          await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
+        });
+      }
+    } catch (error) {
+      return callback(new Error(error.message));
+    }
+
+    return callback(null, { message: 'Pull request review event processing has been completed' });
+  } else if (githubEvent === 'issue_comment') {
+    try {
+      const action = payload.action;
+      const slack = new Slack(SLACK_API_TOKEN);
+
+      if (action === 'created') {
+        if (config.mentionComment) {
+          const comment = PullRequest.parseMentionComment(payload.comment.body);
           comment.mentionUsers.forEach(async (mentionUser) => {
             const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
             await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
@@ -124,7 +146,7 @@ exports.handler = async (event, context, callback) => {
       return callback(new Error(error.message));
     }
 
-    return callback(null, { message: 'Pull request review event processing has been completed' });
+    return callback(null, { message: 'Issue event processing has been completed' });
   }
 
   return callback(null, { message: `event of type ${githubEvent} was ignored.` });

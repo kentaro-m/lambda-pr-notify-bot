@@ -4,13 +4,13 @@ A slackbot that reminds reviewers to review their pull requests on AWS.
 Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to review their pull requests.](https://github.com/kentaro-m/pr-notify-bot)
 
 ## Feature
-* Automatic addition of reviewers to pull requests
 * Send notifications to Slack
   * Pull request can be merged
   * Pull request review request is created
   * Mention comment is created on a pull request
+* Automatic addition of reviewers to pull requests
 
-![](./demo.png)
+![](./images/demo.png)
 
 ## Architecture
 ![](./architecture.png)
@@ -19,10 +19,10 @@ Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to 
 
 ### How to set up webhook on GitHub
 * Go to your project settings > Webhooks > Add webhook
-* **Payload URL** `https://<API ID>.execute-api.<AWS Region>.amazonaws.com/<Stage Nåame>/webhook`
+* **Payload URL** `https://<API ID>.execute-api.<AWS Region>.amazonaws.com/<Stage Name>/webhook`
 * **Content type** `application/json`
 * **Secret** any value
-* **Events** Pull request, Pull request review, Pull request review comment
+* **Events** Pull request, Pull request review, Pull request review comment, Issue
 
 ### How to run the bot on AWS
 ```
@@ -38,7 +38,6 @@ Installing packages and building code.
 {
   "host": "", // Required if using GitHub Enterprise
   "pathPrefix": "", // Required if using GitHub Enterprise
-  "organization": "",
   "repositories": [ // Repositories that allows bot actions
     "unleash-sample"
   ],
@@ -91,6 +90,19 @@ Please use it when assigning a static IP to execute a Lambda Function. Also, if 
 $ aws cloudformation package --template-file pr-notify-bot-on-vpc.yml --s3-bucket <Your bucket name> --output-template .sam/packaged.yml
 $ aws cloudformation deploy --template-file ./.sam/packaged.yml --stack-name <Your stack name> --parameter-overrides SecurityGroupIds=<SecurityGroupIds value> PrivateSubnetIds=<PrivateSubnetIds value> --capabilities CAPABILITY_IAM
 ```
+
+## Demo
+### When a pull request can be merged, notify an author
+![](./images/able_to_merge.gif)
+
+### When a pull request review request is created, notify reviewers
+![](./images/assign_to_reviewer.gif)
+
+### When a mention comment is created on a pull request, notify recipients
+![](./images/check_review_comment.gif)
+
+### Whan a pull request is opened, assign reviewers.
+![](./images/auto_assign.gif)
 
 ## License
 MIT

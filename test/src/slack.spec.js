@@ -45,11 +45,18 @@ describe('Slack', () => {
       assert.match(message[0].text, /:white_check_mark:/);
     });
 
-    it('can create a mention message', () => {
-      const event = readFixtures('test/fixtures/mention.json');
+    it('can create a mention message (review comment)', () => {
+      const event = readFixtures('test/fixtures/mention_review.json');
       const payload = event.body;
       const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
       assert.match(message[0].fields[0].value, /Review Comment/);
+    });
+
+    it('can create a mention message (issue comment)', () => {
+      const event = readFixtures('test/fixtures/mention_issue.json');
+      const payload = event.body;
+      const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
+      assert.match(message[0].fields[0].value, /Issue Comment/);
     });
   });
 });

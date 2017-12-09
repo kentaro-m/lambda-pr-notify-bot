@@ -71,7 +71,9 @@ export default class PullRequest {
     const matches = body.match(/@([a-zA-Z0-9_-]+)/g);
 
     if (matches === null) {
-      return {};
+      return {
+        mentionUsers: [],
+      };
     }
 
     const mentionUsers = matches.map((match) => {
@@ -79,7 +81,7 @@ export default class PullRequest {
     });
 
     const results = {
-      mentionUsers,
+      mentionUsers: mentionUsers || [],
     };
 
     return results;

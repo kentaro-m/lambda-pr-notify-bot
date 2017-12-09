@@ -1,10 +1,11 @@
 import sinon from 'sinon';
 import { assert } from 'chai';
-
-import index from '../../src/index';
+import rewire from 'rewire';
 import readFixtures from '../../test/utils/fixtures';
 import PullRequest from '../../src/pull_request';
 import Slack from '../../src/slack';
+
+const index = rewire('../../src/index.js');
 
 /* global describe, it, beforeEach, afterEach */
 
@@ -113,6 +114,7 @@ describe('Index', () => {
       env = Object.assign({}, process.env);
       sandbox = sinon.createSandbox();
       sandbox.stub(Slack.prototype, 'postMessage').returns(Promise.resolve({}));
+      index.__set__('validateSignature', () => true);
     });
 
     afterEach(() => {
@@ -142,9 +144,17 @@ describe('Index', () => {
       it('can send a mention message to a member using Slack', async () => {
         const reviewComments = readFixtures('test/fixtures/review_comments_changed.json');
         sandbox.stub(PullRequest.prototype, 'getReviewComments').returns(Promise.resolve(reviewComments));
-        event = readFixtures('test/fixtures/mention.json');
+        event = readFixtures('test/fixtures/mention_review.json');
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
+      });
+    });
+
+    describe('handle a issue event', () => {
+      it('can send a mention message to a member using Slack', async () => {
+        event = readFixtures('test/fixtures/mention_issue.json');
+        await index.handler(event, context, callback);
+        assert.equal(callback.args[0][1].message, 'Issue event processing has been completed');
       });
     });
   });
