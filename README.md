@@ -22,7 +22,7 @@ Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to 
 * **Payload URL** `https://<API ID>.execute-api.<AWS Region>.amazonaws.com/<Stage Name>/webhook`
 * **Content type** `application/json`
 * **Secret** any value
-* **Events** Pull request, Pull request review, Pull request review comment, Issue
+* **Events** Pull request, Pull request review, Pull request review comment, Issue comment
 
 ### How to run the bot on AWS
 ```
