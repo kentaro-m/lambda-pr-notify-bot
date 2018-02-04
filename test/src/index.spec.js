@@ -1,11 +1,10 @@
 import sinon from 'sinon';
 import { assert } from 'chai';
 import rewire from 'rewire';
+import requireReload from 'require-reload';
 import readFixtures from '../../test/utils/fixtures';
 import PullRequest from '../../src/pull_request';
 import Slack from '../../src/slack';
-
-const index = rewire('../../src/index.js');
 
 /* global describe, it, beforeEach, afterEach */
 
@@ -36,12 +35,16 @@ describe('Index', () => {
     });
 
     it('can throw a secret token no set error', async () => {
+      const reload = requireReload(require);
+      const index = reload('../../src/index.js');
       await index.handler(event, context, callback);
       assert.match(callback.args[0], /Secret Token is not found./);
     });
 
     it('can throw a slack api token no set error', async () => {
       process.env.SECRET_TOKEN = 'secret token';
+      const reload = requireReload(require);
+      const index = reload('../../src/index.js');
       await index.handler(event, context, callback);
       assert.match(callback.args[0], /Slack API Token is not found./);
     });
@@ -49,6 +52,8 @@ describe('Index', () => {
     it('can throw a github api token no set error', async () => {
       process.env.SECRET_TOKEN = 'secret token';
       process.env.SLACK_API_TOKEN = 'slack api token';
+      const reload = requireReload(require);
+      const index = reload('../../src/index.js');
       await index.handler(event, context, callback);
       assert.match(callback.args[0], /GitHub API Token is not found./);
     });
@@ -83,6 +88,8 @@ describe('Index', () => {
       process.env.SECRET_TOKEN = 'secret token';
       process.env.SLACK_API_TOKEN = 'slack api token';
       process.env.GITHUB_API_TOKEN = 'github api token';
+      const reload = requireReload(require);
+      const index = reload('../../src/index.js');
       await index.handler(event, context, callback);
       assert.match(callback.args[0], /X-Hub-Signature and Calculated Signature do not match./);
     });
@@ -92,6 +99,8 @@ describe('Index', () => {
       process.env.SLACK_API_TOKEN = 'slack api token';
       process.env.GITHUB_API_TOKEN = 'github api token';
       process.env.SECRET_TOKEN = 'secret token';
+      const reload = requireReload(require);
+      const index = reload('../../src/index.js');
       await index.handler(event, context, callback);
       assert.match(callback.args[0], /X-Hub-Signature and Calculated Signature do not match./);
     });
@@ -114,7 +123,8 @@ describe('Index', () => {
       env = Object.assign({}, process.env);
       sandbox = sinon.createSandbox();
       sandbox.stub(Slack.prototype, 'postMessage').returns(Promise.resolve({}));
-      index.__set__('validateSignature', () => true);
+      const reload = requireReload(require);
+      reload('../../src/handler');
     });
 
     afterEach(() => {
@@ -127,6 +137,8 @@ describe('Index', () => {
         sandbox.stub(PullRequest.prototype, 'requestReview').returns(Promise.resolve({}));
         sandbox.stub(PullRequest.prototype, 'assignReviewers').returns(Promise.resolve({}));
         event = readFixtures('test/fixtures/request_review.json');
+        const index = rewire('../../src/index.js');
+        index.__set__('validateSignature', () => true);
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Pull request event processing has been completed');
       });
@@ -137,6 +149,8 @@ describe('Index', () => {
         const reviewComments = readFixtures('test/fixtures/review_comments_approved.json');
         sandbox.stub(PullRequest.prototype, 'getReviewComments').returns(Promise.resolve(reviewComments));
         event = readFixtures('test/fixtures/merge.json');
+        const index = rewire('../../src/index.js');
+        index.__set__('validateSignature', () => true);
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
       });
@@ -145,6 +159,8 @@ describe('Index', () => {
         const reviewComments = readFixtures('test/fixtures/review_comments_changed.json');
         sandbox.stub(PullRequest.prototype, 'getReviewComments').returns(Promise.resolve(reviewComments));
         event = readFixtures('test/fixtures/mention_review.json');
+        const index = rewire('../../src/index.js');
+        index.__set__('validateSignature', () => true);
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
       });
@@ -153,6 +169,8 @@ describe('Index', () => {
     describe('handle a issue event', () => {
       it('can send a mention message to a member using Slack', async () => {
         event = readFixtures('test/fixtures/mention_issue.json');
+        const index = rewire('../../src/index.js');
+        index.__set__('validateSignature', () => true);
         await index.handler(event, context, callback);
         assert.equal(callback.args[0][1].message, 'Issue event processing has been completed');
       });
