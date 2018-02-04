@@ -12,17 +12,14 @@
   "dependencies": {
     "@octokit/rest": "^14.0.8",
     "@slack/client": "^3.10.0",
-    "babel-cli": "^6.24.1",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
     "bluebird": "^3.5.0",
     "config": "^1.26.1",
     "crypto": "0.0.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.39",
+    "@babel/core": "^7.0.0-beta.39",
+    "@babel/preset-env": "^7.0.0-beta.39",
     "chai": "^4.1.2",
     "eslint": "^4.3.0",
     "eslint-config-airbnb-base": "^11.3.1",
