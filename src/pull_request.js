@@ -1,6 +1,6 @@
 'use struct';
 
-import GitHubApi from 'github';
+import GitHubApi from '@octokit/rest';
 
 export default class PullRequest {
   constructor(options, token) {
