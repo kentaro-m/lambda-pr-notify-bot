@@ -1,20 +1,22 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/lambda-pr-notify-bot
+    working_directory: ~/workspace
     docker:
-      - image: circleci/node:6.11
+      - image: node:6.10.3
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run:
-          name: npm install
-          command: npm install
+          name: yarn install
+          command: yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
-            - ./node_modules
+            - ~/workspace/.cache/yarn
+            - ~/workspace/node_modules
+            - ~/workspace/package.json
       - run:
           name: test
-          command: npm test
+          command: yarn test
