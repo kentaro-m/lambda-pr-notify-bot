@@ -1,12 +1,19 @@
 import crypto from 'crypto';
-import { handlePullRequestEvent, handlePullRequestReviewEvent, handleIssueEvent } from './handler';
+import {
+  handlePullRequestEvent,
+  handlePullRequestReviewEvent,
+  handleIssueEvent,
+} from './handler';
 
 const SECRET_TOKEN = process.env.SECRET_TOKEN || '';
 const GITHUB_API_TOKEN = process.env.GITHUB_API_TOKEN || '';
 const SLACK_API_TOKEN = process.env.SLACK_API_TOKEN || '';
 
 function calculateSignature(secret, payload) {
-  return `sha1=${crypto.createHmac('sha1', secret).update(payload, 'utf-8').digest('hex')}`;
+  return `sha1=${crypto
+    .createHmac('sha1', secret)
+    .update(payload, 'utf-8')
+    .digest('hex')}`;
 }
 
 function validateSignature(githubSignature, calculatedSignature) {
@@ -30,11 +37,16 @@ exports.handler = async (event, context, callback) => {
     callback(new Error('GitHub API Token is not found.'));
   }
 
-  const calculatedSignature = calculateSignature(SECRET_TOKEN, JSON.stringify(payload));
+  const calculatedSignature = calculateSignature(
+    SECRET_TOKEN,
+    JSON.stringify(payload)
+  );
 
   const isValid = validateSignature(signature, calculatedSignature);
   if (!isValid) {
-    callback(new Error('X-Hub-Signature and Calculated Signature do not match.'));
+    callback(
+      new Error('X-Hub-Signature and Calculated Signature do not match.')
+    );
   }
 
   if (githubEvent === 'pull_request') {

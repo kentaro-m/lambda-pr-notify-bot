@@ -30,8 +30,13 @@ describe('PullRequest', () => {
 
   describe('getApproveComments', () => {
     it('can create an array of approved comments', () => {
-      const reviewComments = readFixtures('test/fixtures/review_comments_approved.json');
-      const approveComments = PullRequest.getApproveComments(reviewComments, config.approveComments);
+      const reviewComments = readFixtures(
+        'test/fixtures/review_comments_approved.json'
+      );
+      const approveComments = PullRequest.getApproveComments(
+        reviewComments,
+        config.approveComments
+      );
       assert.equal(approveComments.length, 1);
     });
   });

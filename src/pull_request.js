@@ -55,10 +55,14 @@ export default class PullRequest {
     const results = [];
     const reviewCommentIDs = [];
 
-    reviewComments.data.map((reviewComment) => {
-      approveComments.forEach((approveComment) => {
+    reviewComments.data.map(reviewComment => {
+      approveComments.forEach(approveComment => {
         if (!reviewCommentIDs.includes(reviewComment.id)) {
-          if (reviewComment.body === approveComment || reviewComment.state === 'APPROVED') results.push(reviewComment);
+          if (
+            reviewComment.body === approveComment ||
+            reviewComment.state === 'APPROVED'
+          )
+            results.push(reviewComment);
           reviewCommentIDs.push(reviewComment.id);
         }
       });
@@ -76,9 +80,7 @@ export default class PullRequest {
       };
     }
 
-    const mentionUsers = matches.map((match) => {
-      return match.slice(1);
-    });
+    const mentionUsers = matches.map(match => match.slice(1));
 
     const results = {
       mentionUsers: mentionUsers || [],

@@ -1,9 +1,14 @@
 {
-    "extends": "airbnb-base",
-    "plugins": [
-        "import"
-    ],
-    "rules": {
-      "no-underscore-dangle": 0
-    }
+  "extends": ["airbnb-base", "plugin:prettier/recommended"],
+  "plugins": ["import"],
+  "rules": {
+    "no-underscore-dangle": 0,
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "trailingComma": "es5"
+      }
+    ]
+  }
 }
