@@ -14,7 +14,6 @@ const options = {
   headers: {
     'user-agent': 'PR-Bot',
   },
-  Promise,
   timeout: 10000,
 };
 
