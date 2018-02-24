@@ -35,7 +35,9 @@ export async function handlePullRequestEvent(payload, callback) {
     const author = payload.pull_request.user.login;
 
     if (action === 'opened') {
-      const reviewers = config.reviewers.filter(reviewer => author !== reviewer);
+      const reviewers = config.reviewers.filter(
+        reviewer => author !== reviewer
+      );
 
       const pr = new PullRequest(options, GITHUB_API_TOKEN);
 
@@ -49,8 +51,12 @@ export async function handlePullRequestEvent(payload, callback) {
 
       if (config.requestReview === true || config.assignReviewers === true) {
         const slack = new Slack(SLACK_API_TOKEN);
-        reviewers.forEach(async (reviewer) => {
-          const message = Slack.buildMessage(payload, config.message.requestReview, 'requestReview');
+        reviewers.forEach(async reviewer => {
+          const message = Slack.buildMessage(
+            payload,
+            config.message.requestReview,
+            'requestReview'
+          );
           await slack.postMessage(config.slackUsers[`${reviewer}`], message);
         });
       }
@@ -59,7 +65,9 @@ export async function handlePullRequestEvent(payload, callback) {
     callback(new Error(error.message));
   }
 
-  callback(null, { message: 'Pull request event processing has been completed' });
+  callback(null, {
+    message: 'Pull request event processing has been completed',
+  });
 }
 
 export async function handlePullRequestReviewEvent(payload, callback) {
@@ -74,18 +82,29 @@ export async function handlePullRequestReviewEvent(payload, callback) {
     if (config.ableToMerge) {
       const pr = new PullRequest(options, GITHUB_API_TOKEN);
       const reviewComments = await pr.getReviewComments(owner, repo, number);
-      const approveComments = PullRequest.getApproveComments(reviewComments, config.approveComments);
+      const approveComments = PullRequest.getApproveComments(
+        reviewComments,
+        config.approveComments
+      );
 
       if (approveComments.length === config.numApprovers) {
-        const message = Slack.buildMessage(payload, config.message.ableToMerge, 'ableToMerge');
+        const message = Slack.buildMessage(
+          payload,
+          config.message.ableToMerge,
+          'ableToMerge'
+        );
         await slack.postMessage(config.slackUsers[`${user}`], message);
       }
     }
 
     if (config.mentionComment) {
       const comment = PullRequest.parseMentionComment(payload.review.body);
-      comment.mentionUsers.forEach(async (mentionUser) => {
-        const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
+      comment.mentionUsers.forEach(async mentionUser => {
+        const message = Slack.buildMessage(
+          payload,
+          config.message.mentionComment,
+          'mentionComment'
+        );
         await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
       });
     }
@@ -93,7 +112,9 @@ export async function handlePullRequestReviewEvent(payload, callback) {
     callback(new Error(error.message));
   }
 
-  callback(null, { message: 'Pull request review event processing has been completed' });
+  callback(null, {
+    message: 'Pull request review event processing has been completed',
+  });
 }
 
 export async function handleIssueEvent(payload, callback) {
@@ -104,8 +125,12 @@ export async function handleIssueEvent(payload, callback) {
     if (action === 'created') {
       if (config.mentionComment) {
         const comment = PullRequest.parseMentionComment(payload.comment.body);
-        comment.mentionUsers.forEach(async (mentionUser) => {
-          const message = Slack.buildMessage(payload, config.message.mentionComment, 'mentionComment');
+        comment.mentionUsers.forEach(async mentionUser => {
+          const message = Slack.buildMessage(
+            payload,
+            config.message.mentionComment,
+            'mentionComment'
+          );
           await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
         });
       }

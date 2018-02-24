@@ -22,9 +22,7 @@ describe('Index', () => {
           'X-GitHub-Event': 'pull_request',
           'X-Hub-Signature': 'sha1=36e4d168d0d6c6bd92f639f830420ccd840d6214',
         },
-        body: {
-
-        },
+        body: {},
       };
       context = {};
       env = Object.assign({}, process.env);
@@ -72,9 +70,7 @@ describe('Index', () => {
           'X-GitHub-Event': 'pull_request',
           'X-Hub-Signature': 'sha1=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         },
-        body: {
-
-        },
+        body: {},
       };
       context = {};
       env = Object.assign({}, process.env);
@@ -91,7 +87,10 @@ describe('Index', () => {
       const reload = requireReload(require);
       const index = reload('../../src/index.js');
       await index.handler(event, context, callback);
-      assert.match(callback.args[0], /X-Hub-Signature and Calculated Signature do not match./);
+      assert.match(
+        callback.args[0],
+        /X-Hub-Signature and Calculated Signature do not match./
+      );
     });
 
     it('can throw a secret token no match error', async () => {
@@ -102,7 +101,10 @@ describe('Index', () => {
       const reload = requireReload(require);
       const index = reload('../../src/index.js');
       await index.handler(event, context, callback);
-      assert.match(callback.args[0], /X-Hub-Signature and Calculated Signature do not match./);
+      assert.match(
+        callback.args[0],
+        /X-Hub-Signature and Calculated Signature do not match./
+      );
     });
   });
 
@@ -134,35 +136,56 @@ describe('Index', () => {
 
     describe('handle a pull request event', () => {
       it('can send a review request message to reviewers using Slack', async () => {
-        sandbox.stub(PullRequest.prototype, 'requestReview').returns(Promise.resolve({}));
-        sandbox.stub(PullRequest.prototype, 'assignReviewers').returns(Promise.resolve({}));
+        sandbox
+          .stub(PullRequest.prototype, 'requestReview')
+          .returns(Promise.resolve({}));
+        sandbox
+          .stub(PullRequest.prototype, 'assignReviewers')
+          .returns(Promise.resolve({}));
         event = readFixtures('test/fixtures/request_review.json');
         const index = rewire('../../src/index.js');
         index.__set__('validateSignature', () => true);
         await index.handler(event, context, callback);
-        assert.equal(callback.args[0][1].message, 'Pull request event processing has been completed');
+        assert.equal(
+          callback.args[0][1].message,
+          'Pull request event processing has been completed'
+        );
       });
     });
 
     describe('handle a pull request review event', () => {
       it('can send a able merge message to the author using Slack', async () => {
-        const reviewComments = readFixtures('test/fixtures/review_comments_approved.json');
-        sandbox.stub(PullRequest.prototype, 'getReviewComments').returns(Promise.resolve(reviewComments));
+        const reviewComments = readFixtures(
+          'test/fixtures/review_comments_approved.json'
+        );
+        sandbox
+          .stub(PullRequest.prototype, 'getReviewComments')
+          .returns(Promise.resolve(reviewComments));
         event = readFixtures('test/fixtures/merge.json');
         const index = rewire('../../src/index.js');
         index.__set__('validateSignature', () => true);
         await index.handler(event, context, callback);
-        assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
+        assert.equal(
+          callback.args[0][1].message,
+          'Pull request review event processing has been completed'
+        );
       });
 
       it('can send a mention message to a member using Slack', async () => {
-        const reviewComments = readFixtures('test/fixtures/review_comments_changed.json');
-        sandbox.stub(PullRequest.prototype, 'getReviewComments').returns(Promise.resolve(reviewComments));
+        const reviewComments = readFixtures(
+          'test/fixtures/review_comments_changed.json'
+        );
+        sandbox
+          .stub(PullRequest.prototype, 'getReviewComments')
+          .returns(Promise.resolve(reviewComments));
         event = readFixtures('test/fixtures/mention_review.json');
         const index = rewire('../../src/index.js');
         index.__set__('validateSignature', () => true);
         await index.handler(event, context, callback);
-        assert.equal(callback.args[0][1].message, 'Pull request review event processing has been completed');
+        assert.equal(
+          callback.args[0][1].message,
+          'Pull request review event processing has been completed'
+        );
       });
     });
 
@@ -172,7 +195,10 @@ describe('Index', () => {
         const index = rewire('../../src/index.js');
         index.__set__('validateSignature', () => true);
         await index.handler(event, context, callback);
-        assert.equal(callback.args[0][1].message, 'Issue event processing has been completed');
+        assert.equal(
+          callback.args[0][1].message,
+          'Issue event processing has been completed'
+        );
       });
     });
   });

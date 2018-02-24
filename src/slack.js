@@ -17,19 +17,23 @@ export default class Slack {
   }
 
   static buildMessage(payload, message, type = '') {
-    const eventType = Object.prototype.hasOwnProperty.call(payload, 'issue') ? 'issue' : 'pull_request';
+    const eventType = Object.prototype.hasOwnProperty.call(payload, 'issue')
+      ? 'issue'
+      : 'pull_request';
     const user = payload[`${eventType}`].user;
     const title = payload[`${eventType}`].title;
     const titleLink = payload[`${eventType}`].html_url;
 
-    const attachments = [{
-      color: '#36a64f',
-      author_name: `${user.login} (${payload.repository.name})`,
-      author_icon: user.avatar_url,
-      title,
-      title_link: titleLink,
-      text: message,
-    }];
+    const attachments = [
+      {
+        color: '#36a64f',
+        author_name: `${user.login} (${payload.repository.name})`,
+        author_icon: user.avatar_url,
+        title,
+        title_link: titleLink,
+        text: message,
+      },
+    ];
 
     if (type === 'assignReviewers' || type === 'requestReview') {
       attachments[0].color = 'warning';
@@ -44,7 +48,9 @@ export default class Slack {
       attachments[0].color = 'warning';
       attachments[0].text = `:eyes: ${message}`;
 
-      const commentType = Object.prototype.hasOwnProperty.call(payload, 'issue') ? 'comment' : 'review';
+      const commentType = Object.prototype.hasOwnProperty.call(payload, 'issue')
+        ? 'comment'
+        : 'review';
       attachments[0].title_link = payload[`${commentType}`].html_url;
       attachments[0].fields = [
         {
