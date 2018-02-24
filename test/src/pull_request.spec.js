@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import { assert } from 'chai';
 import config from 'config';
 
@@ -17,7 +16,6 @@ describe('PullRequest', () => {
     headers: {
       'user-agent': 'PR-Bot',
     },
-    Promise,
     timeout: 10000,
   };
 
