@@ -7,7 +7,7 @@
 
 ![](./images/notify_to_slack.png)
 
-## Feature
+## Features
 
 * :arrows_clockwise: Add automatically reviewers to pull request
 * :bell: Send a direct messages to Slack
