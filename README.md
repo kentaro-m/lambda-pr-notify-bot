@@ -1,33 +1,41 @@
 # lambda-pr-notify-bot
 
-A slackbot that reminds reviewers to review their pull requests on AWS.
+[![CircleCI](https://img.shields.io/circleci/project/github/kentaro-m/lambda-pr-notify-bot.svg?style=flat-square)](https://circleci.com/gh/kentaro-m/lambda-pr-notify-bot)
+[![license](https://img.shields.io/github/license/kentaro-m/lambda-pr-notify-bot.svg?style=flat-square)](https://github.com/kentaro-m/lambda-pr-notify-bot/blob/master/LICENSE)
 
-Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to review their pull requests.](https://github.com/kentaro-m/pr-notify-bot)
+:robot: A bot that improve pull request workflow on GitHub.
 
-## Feature
+![](./images/notify_to_slack.png)
 
-* Send notifications to Slack
-  * Pull request can be merged
-  * Pull request review request is created
-  * Mention comment is created on a pull request
-* Add reviewers to pull requests
-* Manege WIP pull request by using a label
+## Features
 
-![](./images/demo.png)
+* :arrows_clockwise: Add automatically reviewers to pull request
+* :bell: Send a direct messages to Slack
+  * When the pull request is opened
+  * When the pull request is approved
+  * When the pull request is added mention comment
+* :pushpin: Manege WIP pull request by using a label
 
-## Architecture
+## Configuration
 
-![](./architecture.png)
+### How to create oauth token for send messages to Slack
 
-## Usage
+1. Access to [Your Apps](https://api.slack.com/apps)
+2. Click the Create New App
+3. Input App Name and Development Slack Workspace
+4. Select Permissions in Add features and functionality
+5. Add `chat:write:bot` in Permission Scopes
+6. Create a token
+7. Copy OAuth Access Token
 
-### How to set up webhook on GitHub
+### How to create oauth token for request GitHub API.
 
-* Go to your project settings > Webhooks > Add webhook
-* **Payload URL** `https://<API ID>.execute-api.<AWS Region>.amazonaws.com/<Stage Name>/webhook`
-* **Content type** `application/json`
-* **Secret** any value
-* **Events** Pull request, Pull request review, Pull request review comment, Issue comment
+1. Access to [Personal access tokens](https://github.com/settings/tokens)
+2. Click the Generate new token
+3. Input description in Token description
+4. Add `repo` in Select scopes
+5. Create a token
+6. Copy OAuth Access Token
 
 ### How to run the bot on AWS
 
@@ -93,6 +101,14 @@ $ aws cloudformation deploy --template-file ./.sam/packaged.yml --stack-name <Yo
 
 Upload the SAM template to S3 and deploy it.
 
+### How to set up webhook on GitHub
+
+* Go to your project (or organization) settings > Webhooks > Add webhook
+* **Payload URL** `https://<API ID>.execute-api.<AWS Region>.amazonaws.com/<Stage Name>/webhook`
+* **Content type** `application/json`
+* **Secret** any value
+* **Events** Pull request, Pull request review, Pull request review comment, Issue comment
+
 ### Options: Execute a Lambda Function on VPC
 
 Please use it when assigning a static IP to execute a Lambda Function. Also, if necessary, please specify security group and subnet as parameters (An array of literal strings that are separated by commas.).
@@ -105,23 +121,36 @@ $ aws cloudformation package --template-file pr-notify-bot-on-vpc.yml --s3-bucke
 $ aws cloudformation deploy --template-file ./.sam/packaged.yml --stack-name <Your stack name> --parameter-overrides SecurityGroupIds=<SecurityGroupIds value> PrivateSubnetIds=<PrivateSubnetIds value> --capabilities CAPABILITY_IAM
 ```
 
-## Demo
+## Usage
 
-### When a pull request can be merged, notify an author
-
-![](./images/able_to_merge.gif)
-
-### When a pull request review request is created, notify reviewers
+### Add automatically reviewers to pull request
 
 ![](./images/assign_to_reviewer.gif)
 
-### When a mention comment is created on a pull request, notify recipients
+1. Pull request is created
+2. Add automatically reviewers to the pull request
+3. Send a direct message to Slack
+
+### Manege WIP pull request by using a label
+
+![](./images/wip.gif)
+
+1. Create a pull request by including WIP in the title
+2. Add automatically wip label to the pull request
+3. Remove wip label, when the pull request is ready for review
+4. Add automatically reviewers to the pull request
+
+### Send a direct messages to Slack
 
 ![](./images/check_review_comment.gif)
 
-### Whan a pull request is opened, assign reviewers.
+* When the pull request is opened
+* When the pull request is added mention comment
+* When the pull request is approved
 
-![](./images/auto_assign.gif)
+## Architecture
+
+![](./architecture.png)
 
 ## License
 
