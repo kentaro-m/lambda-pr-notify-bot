@@ -1,5 +1,7 @@
 # lambda-pr-notify-bot
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a57875bfa16745318c90732222c4b7f5)](https://app.codacy.com/app/kentaro-m/lambda-pr-notify-bot?utm_source=github.com&utm_medium=referral&utm_content=kentaro-m/lambda-pr-notify-bot&utm_campaign=badger)
+
 A slackbot that reminds reviewers to review their pull requests on AWS.
 
 Related project: [kentaro-m/pr-notify-bot: A slackbot that reminds reviewers to review their pull requests.](https://github.com/kentaro-m/pr-notify-bot)
