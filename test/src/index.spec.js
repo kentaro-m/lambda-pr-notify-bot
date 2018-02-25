@@ -151,6 +151,23 @@ describe('Index', () => {
           'Pull request event processing has been completed'
         );
       });
+
+      it('can send a review request message, when a wip label is removed from wip pull request.', async () => {
+        sandbox
+          .stub(PullRequest.prototype, 'requestReview')
+          .returns(Promise.resolve({}));
+        sandbox
+          .stub(PullRequest.prototype, 'assignReviewers')
+          .returns(Promise.resolve({}));
+        event = readFixtures('test/fixtures/work_in_progress.json');
+        const index = rewire('../../src/index.js');
+        index.__set__('validateSignature', () => true);
+        await index.handler(event, context, callback);
+        assert.equal(
+          callback.args[0][1].message,
+          'Pull request event processing has been completed'
+        );
+      });
     });
 
     describe('handle a pull request review event', () => {

@@ -32,32 +32,73 @@ export async function handlePullRequestEvent(payload, callback) {
     const repo = payload.repository.name;
     const owner = payload.repository.owner.login;
     const author = payload.pull_request.user.login;
+    const title = payload.pull_request.title;
+
+    const pr = new PullRequest(options, GITHUB_API_TOKEN);
 
     if (action === 'opened') {
-      const reviewers = config.reviewers.filter(
-        reviewer => author !== reviewer
-      );
+      const isWip = title.toLowerCase().includes('wip');
 
-      const pr = new PullRequest(options, GITHUB_API_TOKEN);
+      if (isWip && config.workInProgress) {
+        await pr.addLabel(
+          owner,
+          repo,
+          number,
+          config.labels.wip.name,
+          config.labels.wip.color
+        );
+      } else {
+        const reviewers = config.reviewers.filter(
+          reviewer => author !== reviewer
+        );
 
-      if (config.requestReview) {
-        await pr.requestReview(owner, repo, number, reviewers);
+        if (config.requestReview) {
+          await pr.requestReview(owner, repo, number, reviewers);
+        }
+
+        if (config.assignReviewers) {
+          await pr.assignReviewers(owner, repo, number, reviewers);
+        }
+
+        if (config.requestReview === true || config.assignReviewers === true) {
+          const slack = new Slack(SLACK_API_TOKEN);
+          reviewers.forEach(async reviewer => {
+            const message = Slack.buildMessage(
+              payload,
+              config.message.requestReview,
+              'requestReview'
+            );
+            await slack.postMessage(config.slackUsers[`${reviewer}`], message);
+          });
+        }
       }
+    } else if (action === 'unlabeled') {
+      const isWipUnlabeled = payload.label.name === config.labels.wip.name;
 
-      if (config.assignReviewers) {
-        await pr.assignReviewers(owner, repo, number, reviewers);
-      }
+      if (isWipUnlabeled && config.workInProgress) {
+        const reviewers = config.reviewers.filter(
+          reviewer => author !== reviewer
+        );
 
-      if (config.requestReview === true || config.assignReviewers === true) {
-        const slack = new Slack(SLACK_API_TOKEN);
-        reviewers.forEach(async reviewer => {
-          const message = Slack.buildMessage(
-            payload,
-            config.message.requestReview,
-            'requestReview'
-          );
-          await slack.postMessage(config.slackUsers[`${reviewer}`], message);
-        });
+        if (config.requestReview) {
+          await pr.requestReview(owner, repo, number, reviewers);
+        }
+
+        if (config.assignReviewers) {
+          await pr.assignReviewers(owner, repo, number, reviewers);
+        }
+
+        if (config.requestReview === true || config.assignReviewers === true) {
+          const slack = new Slack(SLACK_API_TOKEN);
+          reviewers.forEach(async reviewer => {
+            const message = Slack.buildMessage(
+              payload,
+              config.message.requestReview,
+              'requestReview'
+            );
+            await slack.postMessage(config.slackUsers[`${reviewer}`], message);
+          });
+        }
       }
     }
   } catch (error) {
