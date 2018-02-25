@@ -88,4 +88,32 @@ export default class PullRequest {
 
     return results;
   }
+
+  async addLabel(owner, repo, number, labelName, labelColor) {
+    try {
+      const labels = await this.github.issues.getLabels({ owner, repo });
+      const filteredLabels = labels.data.filter(label =>
+        label.name.includes(labelName)
+      );
+      const labelExists = filteredLabels.length > 0;
+
+      if (!labelExists) {
+        await this.github.issues.createLabel({
+          owner,
+          repo,
+          name: labelName,
+          color: labelColor,
+        });
+      }
+
+      await this.github.issues.addLabels({
+        owner,
+        repo,
+        number,
+        labels: [labelName],
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
