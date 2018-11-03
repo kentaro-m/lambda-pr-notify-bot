@@ -63,10 +63,16 @@ Installing packages and building code.
     "LGTM"
   ],
   "numApprovers": 1, // Number of people required for pull request approval
-  "slackUsers": { // Association between Slack user name and Github user name
-    "matsushita-kentaro": "kentaro",
-    "kentaro-m": "kentaro"
-  },
+  "users": [ // Association between Slack user name and Github user name for notifying Slack
+    {
+      "github": "matsushita-kentaro",
+      "slack": "kentaro"
+    },
+    {
+      "github": "kentaro-m",
+      "slack": "kentaro"
+    }
+  ],
   "message": { // Message to notify to Slack
     "requestReview": "Please review this pull request.",
     "ableToMerge": "Able to merge this pull request.",
