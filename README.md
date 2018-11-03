@@ -98,11 +98,18 @@ Add reviewers (GitHub username), repositories and Slack username to `config/defa
 * **SLACK_API_TOKEN** A token for sending messages to Slack (scope: chat:write:bot)
 * **SECRET_TOKEN** A token for securing webhook
 
-Add environment variables to pr-notify-bot.yml. (or Add environment variables on the Lambda management console.)
+Add environment variables as parameters. (or Add environment variables on the Lambda management console.)
 
 ```
-$ aws cloudformation package --template-file pr-notify-bot.yml --s3-bucket <Your bucket name> --output-template .sam/packaged.yml
-$ aws cloudformation deploy --template-file ./.sam/packaged.yml --stack-name <Your stack name> --capabilities CAPABILITY_IAM
+$ aws cloudformation package \ 
+    --template-file pr-notify-bot.yml \ 
+    --s3-bucket <Your bucket name> \ 
+    --output-template packaged.yml
+$ aws cloudformation deploy \ 
+    --template-file packaged.yml \ 
+    --stack-name <Your stack name> \
+    --parameter-overrides GitHubApiToken=<GitHubApiToken value> SlackApiToken=<SlackApiToken value> SecretToken=<SecretToken value> \
+    --capabilities CAPABILITY_IAM
 ```
 
 Upload the SAM template to S3 and deploy it.
@@ -123,8 +130,15 @@ Please use it when assigning a static IP to execute a Lambda Function. Also, if 
 * **PrivateSubnetIds** The list of VPC Private Subnet IDs for running the Lambda Function.
 
 ```
-$ aws cloudformation package --template-file pr-notify-bot-on-vpc.yml --s3-bucket <Your bucket name> --output-template .sam/packaged.yml
-$ aws cloudformation deploy --template-file ./.sam/packaged.yml --stack-name <Your stack name> --parameter-overrides SecurityGroupIds=<SecurityGroupIds value> PrivateSubnetIds=<PrivateSubnetIds value> --capabilities CAPABILITY_IAM
+$ aws cloudformation package \
+    --template-file pr-notify-bot-on-vpc.yml \
+    --s3-bucket <Your bucket name> \
+    --output-template packaged.yml
+$ aws cloudformation deploy \
+    --template-file packaged.yml \
+    --stack-name <Your stack name> \ 
+    --parameter-overrides GitHubApiToken=<GitHubApiToken value> SlackApiToken=<SlackApiToken value> SecretToken=<SecretToken value> SecurityGroupIds=<SecurityGroupIds value> PrivateSubnetIds=<PrivateSubnetIds value> \
+    --capabilities CAPABILITY_IAM
 ```
 
 ## Usage
