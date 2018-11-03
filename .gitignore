@@ -3,3 +3,4 @@ coverage/
 dist/
 .sam
 .nyc_output
+packaged.yml
