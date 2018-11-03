@@ -4,10 +4,16 @@
   "reviewers": ["matsushita-kentaro"],
   "approveComments": ["+1", "LGTM"],
   "numApprovers": 1,
-  "slackUsers": {
-    "matsushita-kentaro": "kentaro",
-    "kentaro-m": "kentaro"
-  },
+  "users": [
+    {
+      "github": "matsushita-kentaro",
+      "slack": "kentaro"
+    },
+    {
+      "github": "kentaro-m",
+      "slack": "kentaro"
+    }
+  ],
   "message": {
     "requestReview": "Please review this pull request.",
     "ableToMerge": "Able to merge this pull request.",

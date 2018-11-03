@@ -1,6 +1,7 @@
 import config from 'config';
 import PullRequest from './pull_request';
 import Slack from './slack';
+import getNotifyUserInfo from './utils';
 
 const GITHUB_API_TOKEN = process.env.GITHUB_API_TOKEN || '';
 const SLACK_API_TOKEN = process.env.SLACK_API_TOKEN || '';
@@ -68,7 +69,12 @@ export async function handlePullRequestEvent(payload, callback) {
               config.message.requestReview,
               'requestReview'
             );
-            await slack.postMessage(config.slackUsers[`${reviewer}`], message);
+
+            const notifyUserInfo = getNotifyUserInfo(
+              reviewer,
+              config.users
+            );
+            await slack.postMessage(notifyUserInfo.slack, message);
           });
         }
       }
@@ -96,7 +102,12 @@ export async function handlePullRequestEvent(payload, callback) {
               config.message.requestReview,
               'requestReview'
             );
-            await slack.postMessage(config.slackUsers[`${reviewer}`], message);
+
+            const notifyUserInfo = getNotifyUserInfo(
+              reviewer,
+              config.users
+            );
+            await slack.postMessage(notifyUserInfo.slack, message);
           });
         }
       }
@@ -133,7 +144,13 @@ export async function handlePullRequestReviewEvent(payload, callback) {
           config.message.ableToMerge,
           'ableToMerge'
         );
-        await slack.postMessage(config.slackUsers[`${user}`], message);
+
+        const notifyUserInfo = getNotifyUserInfo(
+          user,
+          config.users
+        );
+
+        await slack.postMessage(notifyUserInfo.slack, message);
       }
     }
 
@@ -145,7 +162,13 @@ export async function handlePullRequestReviewEvent(payload, callback) {
           config.message.mentionComment,
           'mentionComment'
         );
-        await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
+
+        const notifyUserInfo = getNotifyUserInfo(
+          mentionUser,
+          config.users
+        );
+
+        await slack.postMessage(notifyUserInfo.slack, message);
       });
     }
   } catch (error) {
@@ -171,7 +194,13 @@ export async function handleIssueEvent(payload, callback) {
             config.message.mentionComment,
             'mentionComment'
           );
-          await slack.postMessage(config.slackUsers[`${mentionUser}`], message);
+
+          const notifyUserInfo = getNotifyUserInfo(
+            mentionUser,
+            config.users
+          );
+
+          await slack.postMessage(notifyUserInfo.slack, message);
         });
       }
     }
